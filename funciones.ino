@@ -4,7 +4,6 @@
 
 extern Adafruit_VL53L0X lox1;
 extern MPU6050 mpu;
-extern BluetoothSerial SerialBT;
 extern QTRSensors QTR;
 extern int posicion;
 extern int blk;
@@ -154,8 +153,8 @@ void DynamicPosition(){
     posicion = QTR.readLineBlack(sensorValues);
     posicion = map(posicion, 0, 7000, -255, 255);
     
-    SerialBT.print("Posicion: ");
-    SerialBT.println(posicion);
+    Serial.print("Posicion: ");
+    Serial.println(posicion);
     error = posicion;
 }
 
