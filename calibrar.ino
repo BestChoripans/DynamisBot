@@ -10,11 +10,11 @@ void QTR_Setup(){
     
     digitalWrite(LED, LOW);
     
-    Serial.println("Presiona el boton para iniciar...");
+    SerialBT.println("Presiona el boton para iniciar...");
     while(digitalRead(BOTON) == 0) {
         delay(10);
     }
-    Serial.println("INICIANDO!");
+    SerialBT.println("INICIANDO!");
     delay(1000);
 }
 
@@ -25,14 +25,14 @@ void MPU6050_Setup(){
     SerialBT.println("Calibrando MPU6050...");
     mpu.begin();
     mpu.calcGyroOffsets();
-    Serial.println("MPU6050 calibrado!");
+    SerialBT.println("MPU6050 calibrado!");
 }
 
 void VL5_Setup(){
     // INICIALIZAR VL53L0X ← NUEVO
     SerialBT.println("Inicializando VL53L0X...");
     if (!lox1.begin()) {
-        Serial.println(F("Failed to boot VL53L0X"));
+        SerialBT.println(F("Failed to boot VL53L0X"));
         while(1);
     }
     SerialBT.println("VL53L0X iniciado!");
