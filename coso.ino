@@ -36,7 +36,7 @@ void setup() {
     // Configurar motores
     MotorSetup();
     
-    Serial.begin(115200);
+    Serial.begin("Fatty cap);
 
     /* Giroscopio */
     MPU6050_Setup();
@@ -59,5 +59,5 @@ void setup() {
 
 void loop() {
     checkObstaculo();  // ← PRIMERO verifica obstáculos
-    intersecciones();           // ← LUEGO sigue la lín  ea
+    intersecciones();  // ← LUEGO sigue la línea
 }
