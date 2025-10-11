@@ -2,18 +2,6 @@
 
 // ------- MOTORES ------- //
 
-void MotorSetup(){
-    pinMode(BIN2, OUTPUT);
-    pinMode(BIN1, OUTPUT);
-    ledcSetup(1, freq, resolution);
-    ledcAttachPin(PWMB, 1);
-    
-    pinMode(AIN1, OUTPUT);
-    pinMode(AIN2, OUTPUT);
-    ledcSetup(0, freq, resolution);
-    ledcAttachPin(PWMA, 0);
-}
-
 // accionamiento motor izquierdo
 void Motoriz(int value) {
     if ( value >= 0 ) {

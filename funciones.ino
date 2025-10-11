@@ -17,6 +17,8 @@ extern int der;
 extern int giro;
 extern int contadorNegro;
 
+extern BluetoothSerial SerialBT;
+
 // ===== CONFIGURACIÓN DEL SENSOR VL53L0X =====
 #define DISTANCIA_MINIMA 105  // Distancia en mm para detectar obstáculo (ajusta según necesites)
 #define TIEMPO_AVANCE 800     // Tiempo que avanza recto en cada tramo (ms)
@@ -40,12 +42,12 @@ int leerDistancia() {
 bool detectarObstaculo() {
     int distancia = leerDistancia();
     
-    Serial.print("Distancia: ");
-    Serial.print(distancia);
-    Serial.println(" mm");
+    SerialBT.print("Distancia: ");
+    SerialBT.print(distancia);
+    SerialBT.println(" mm");
     
     if (distancia < DISTANCIA_MINIMA) {
-        Serial.println("¡OBSTACULO DETECTADO!");
+        SerialBT.println("¡OBSTACULO DETECTADO!");
         return true;
     }
     return false;
@@ -53,59 +55,59 @@ bool detectarObstaculo() {
 
 // Función de maniobra completa de esquive
 void maniobrarEsquive() {
-    Serial.println("\n========================================");
-    Serial.println("   INICIANDO MANIOBRA DE ESQUIVE");
-    Serial.println("========================================\n");
+    SerialBT.println("\n========================================");
+    SerialBT.println("   INICIANDO MANIOBRA DE ESQUIVE");
+    SerialBT.println("========================================\n");
     
     // PASO 1: Girar DERECHA 90°
-    Serial.println("PASO 1: Girando DERECHA 90°...");
+    SerialBT.println("PASO 1: Girando DERECHA 90°...");
     girarDerecha90();
     delay(300);
     
     // PASO 2: Avanzar recto
-    Serial.println("PASO 2: Avanzando recto...");
+    SerialBT.println("PASO 2: Avanzando recto...");
     motores(VELOCIDAD_ESQUIVE, VELOCIDAD_ESQUIVE);
     delay(TIEMPO_AVANCE);
     motores(0, 0);
     delay(300);
     
     // PASO 3: Girar IZQUIERDA 90°
-    Serial.println("PASO 3: Girando IZQUIERDA 90°...");
+    SerialBT.println("PASO 3: Girando IZQUIERDA 90°...");
     girarIzquierda90();
     delay(300);
     
     // PASO 4: Avanzar recto
-    Serial.println("PASO 4: Avanzando recto...");
+    SerialBT.println("PASO 4: Avanzando recto...");
     motores(VELOCIDAD_ESQUIVE, VELOCIDAD_ESQUIVE);
     delay(TIEMPO_AVANCE);
     motores(0, 0);
     delay(300);
     
     // PASO 5: Girar IZQUIERDA 90°
-    Serial.println("PASO 5: Girando IZQUIERDA 90°...");
+    SerialBT.println("PASO 5: Girando IZQUIERDA 90°...");
     girarIzquierda90();
     delay(300);
     
     // PASO 6: Avanzar recto
-    Serial.println("PASO 6: Avanzando recto...");
+    SerialBT.println("PASO 6: Avanzando recto...");
     motores(VELOCIDAD_ESQUIVE, VELOCIDAD_ESQUIVE);
     delay(TIEMPO_AVANCE);
     motores(0, 0);
     delay(300);
     
     // PASO 7: DETENER
-    Serial.println("PASO 7: Deteniendo robot...");
+    SerialBT.println("PASO 7: Deteniendo robot...");
     motores(0, 0);
     delay(500);
     
     // PASO 8: Girar DERECHA 90°
-    Serial.println("PASO 8: Girando DERECHA 90°...");
+    SerialBT.println("PASO 8: Girando DERECHA 90°...");
     girarDerecha90();
     delay(300);
     
-    Serial.println("\n========================================");
-    Serial.println("   MANIOBRA COMPLETADA");
-    Serial.println("========================================\n");
+    SerialBT.println("\n========================================");
+    SerialBT.println("   MANIOBRA COMPLETADA");
+    SerialBT.println("========================================\n");
     
     // Pausa final antes de retomar seguimiento de línea
     delay(500);
@@ -119,7 +121,7 @@ void checkObstaculo() {
 }
 
 void buscarLinea() {
-    Serial.println("Avanzando recto para buscar linea...");
+    SerialBT.println("Avanzando recto para buscar linea...");
     
     // Avanzar recto por 1 segundo
     motores(80, 80);
@@ -139,9 +141,9 @@ void buscarLinea() {
     }
     
     if (lineaEncontrada) {
-        Serial.println("¡Linea encontrada!");
+        SerialBT.println("¡Linea encontrada!");
     } else {
-        Serial.println("Continuando busqueda...");
+        SerialBT.println("Continuando busqueda...");
     }
 }
 
@@ -153,8 +155,8 @@ void DynamicPosition(){
     posicion = QTR.readLineBlack(sensorValues);
     posicion = map(posicion, 0, 7000, -255, 255);
     
-    Serial.print("Posicion: ");
-    Serial.println(posicion);
+    SerialBT.print("Posicion: ");
+    SerialBT.println(posicion);
     error = posicion;
 }
 
@@ -164,15 +166,15 @@ void PositionFollow(){
     der = tp - giro;
     
     // Limitar velocidades para evitar valores fuera de rango
-    izq = constrain(izq, -255, 255);
-    der = constrain(der, -255, 255);
+    izq = constrain(izq, -250, 250);
+    der = constrain(der, -250, 250);
     
     motores(izq, der);
 }
 
 // Función para girar a la derecha
 void girarDerecha90() {
-    Serial.println("=== PREPARANDO GIRO DERECHA ===");
+    SerialBT.println("=== PREPARANDO GIRO DERECHA ===");
     
     // Avanzar un poquito antes de girar
     motores(60, 60);
@@ -180,7 +182,7 @@ void girarDerecha90() {
     motores(0, 0);
     delay(300);
     
-    Serial.println("Girando...");
+    SerialBT.println("Girando...");
     
     // Guardar ángulo inicial
     mpu.update();
@@ -192,20 +194,20 @@ void girarDerecha90() {
     while (anguloActual > -86) {
         mpu.update();
         anguloActual = mpu.getAngleZ() - anguloInicial;
-        Serial.print("Angulo: ");
-        Serial.println(anguloActual);
+        SerialBT.print("Angulo: ");
+        SerialBT.println(anguloActual);
         delay(15);
     }
     
     motores(0, 0);
     delay(100);
-    Serial.println("Giro completado! Buscando linea...");
+    SerialBT.println("Giro completado! Buscando linea...");
     buscarLinea();
 }
 
 // Función para girar a la izquierda
 void girarIzquierda90() {
-    Serial.println("=== PREPARANDO GIRO IZQUIERDA ===");
+    SerialBT.println("=== PREPARANDO GIRO IZQUIERDA ===");
     
     // Avanzar un poquito antes de girar
     motores(60, 60);
@@ -213,7 +215,7 @@ void girarIzquierda90() {
     motores(0, 0);
     delay(300);
     
-    Serial.println("Girando...");
+    SerialBT.println("Girando...");
     
     // Guardar ángulo inicial
     mpu.update();
@@ -225,14 +227,14 @@ void girarIzquierda90() {
     while (anguloActual < 86) {
         mpu.update();
         anguloActual = mpu.getAngleZ() - anguloInicial;
-        Serial.print("Angulo: ");
-        Serial.println(anguloActual);
+        SerialBT.print("Angulo: ");
+        SerialBT.println(anguloActual);
         delay(15);
     }
     
     motores(0, 0);
     delay(100);
-    Serial.println("Giro completado! Buscando linea...");
+    SerialBT.println("Giro completado! Buscando linea...");
     buscarLinea();
 }
 
@@ -243,13 +245,13 @@ void casos() {
     // Debug: Imprimir valores cada cierto tiempo
     static unsigned long ultimaPrint = 0;
     if (millis() - ultimaPrint > 500) {
-        Serial.print("Sensores: ");
+        SerialBT.print("Sensores: ");
         for(int i = 0; i < SensorNum; i++) {
-            Serial.print(sensorValues[i]);
-            Serial.print(" ");
+            SerialBT.print(sensorValues[i]);
+            SerialBT.print(" ");
         }
-        Serial.print(" | Contador: ");
-        Serial.println(contadorNegro);
+        SerialBT.print(" | Contador: ");
+        SerialBT.println(contadorNegro);
         ultimaPrint = millis();
     }
     
@@ -267,12 +269,12 @@ void casos() {
     
     // CASO 1 (MÁXIMA PRIORIDAD): TODOS los sensores detectan NEGRO → AVANZAR RECTO y CONTAR
     if(sensoresNegros == 8) {
-        Serial.println(">> INTERSECCION DETECTADA: TODOS EN NEGRO");
+        SerialBT.println(">> INTERSECCION DETECTADA: TODOS EN NEGRO");
         
         contadorNegro++;
-        Serial.print("*** Contador actualizado a: ");
-        Serial.print(contadorNegro);
-        Serial.println(" ***");
+        SerialBT.print("*** Contador actualizado a: ");
+        SerialBT.print(contadorNegro);
+        SerialBT.println(" ***");
         
         // Avanzar recto para cruzar la intersección
         motores(60, 60);
@@ -283,13 +285,6 @@ void casos() {
         return;
       }
       // CASO 2: TODOS los sensores detectan BLANCO → AVANZAR RECTO (línea cortada)
-    if(sensoresBlancos == 8) {
-        Serial.println(">> TODOS EN BLANCO: Avanzando recto (linea cortada)");
-        motores(tp, tp);
-        delay(50);
-        return;
-    }
-
       
       // CASO 3: Sensores del 0 al 3 detectan NEGRO (4 sensores) → GIRO IZQUIERDA (ZIG-ZAG)
       if(sensoresNegros < 8 &&
@@ -298,7 +293,7 @@ void casos() {
        sensorValues[2] >= blk && 
        sensorValues[3] >= blk && sensorValues[4] >= blk) {
         
-        Serial.println(">> Sensores 0-3 en NEGRO: Confirmando...");
+        SerialBT.println(">> Sensores 0-3 en NEGRO: Confirmando...");
         delay(100);
         
         QTR.read(sensorValues);
@@ -311,7 +306,7 @@ void casos() {
         if(sensoresNegros < 8 && 
            sensorValues[0] >= blk && sensorValues[1] >= blk && 
            sensorValues[2] >= blk && sensorValues[3] >= blk && sensorValues[4] >= blk) {
-            Serial.println(">> Confirmado! Girando IZQUIERDA");
+            SerialBT.println(">> Confirmado! Girando IZQUIERDA");
             girarIzquierda90();
             delay(200);
         }
@@ -325,7 +320,7 @@ void casos() {
        sensorValues[5] >= blk && 
        sensorValues[4] >= blk && sensorValues[3] >= blk) {
         
-        Serial.println(">> Sensores 7-4 en NEGRO: Confirmando...");
+        SerialBT.println(">> Sensores 7-4 en NEGRO: Confirmando...");
         delay(100);
         
         QTR.read(sensorValues);
@@ -338,13 +333,13 @@ void casos() {
         if(sensoresNegros < 8 && 
            sensorValues[7] >= blk && sensorValues[6] >= blk && 
            sensorValues[5] >= blk && sensorValues[4] >= blk && sensorValues[3] >= blk) {
-            Serial.println(">> Confirmado! Girando DERECHA");
+            SerialBT.println(">> Confirmado! Girando DERECHA");
             girarDerecha90();
             delay(200);
         }
         return;
     } 
-    
+      
     
     
     

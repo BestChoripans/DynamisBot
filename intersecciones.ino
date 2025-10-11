@@ -8,13 +8,13 @@ void intersecciones(){
     // Debug: Imprimir valores cada cierto tiempo
     static unsigned long ultimaPrint = 0;
     if (millis() - ultimaPrint > 500) {
-        Serial.print("Sensores: ");
+        SerialBT.print("Sensores: ");
         for(int i = 0; i < SensorNum; i++) {
-            Serial.print(sensorValues[i]);
-            Serial.print(" ");
+            SerialBT.print(sensorValues[i]);
+            SerialBT.print(" ");
         }
-        Serial.print(" | Contador: ");
-        Serial.println(contadorNegro);
+        SerialBT.print(" | Contador: ");
+        SerialBT.println(contadorNegro);
         ultimaPrint = millis();
     }
     
@@ -32,15 +32,15 @@ void intersecciones(){
     
     // CASO 1 (MÁXIMA PRIORIDAD): TODOS los sensores detectan NEGRO → AVANZAR RECTO y CONTAR
     if(sensoresNegros == 8) {
-        Serial.println(">> INTERSECCION DETECTADA: TODOS EN NEGRO");
+        SerialBT.println(">> INTERSECCION DETECTADA: TODOS EN NEGRO");
         
         contadorNegro++;
         if(interseccion==5){
           interseccion++;
         }
-        Serial.print("*** Contador actualizado a: ");
-        Serial.print(contadorNegro);
-        Serial.println(" ***");
+        SerialBT.print("*** Contador actualizado a: ");
+        SerialBT.print(contadorNegro);
+        SerialBT.println(" ***");
         
         // Avanzar recto para cruzar la intersección
         motores(60, 60);
