@@ -34,58 +34,27 @@ int interseccion = 0;
 
 void setup() {
     // Configurar motores
-    pinMode(BIN2, OUTPUT);
-    pinMode(BIN1, OUTPUT);
-    ledcSetup(1, freq, resolution);
-    ledcAttachPin(PWMB, 1);
+    MotorSetup();
     
-    pinMode(AIN1, OUTPUT);
-    pinMode(AIN2, OUTPUT);
-    ledcSetup(0, freq, resolution);
-    ledcAttachPin(PWMA, 0);
-    
-    SerialBT.begin("Fatty cap");
-    Wire.begin();
-    
-    // INICIALIZAR MPU6050
-    SerialBT.println("Calibrando MPU6050...");
-    mpu.begin();
-    mpu.calcGyroOffsets();
-    SerialBT.println("MPU6050 calibrado!");
-    
-    // INICIALIZAR VL53L0X ← NUEVO
-    SerialBT.println("Inicializando VL53L0X...");
-    if (!lox1.begin()) {
-        SerialBT.println(F("Failed to boot VL53L0X"));
-        while(1);
-    }
-    SerialBT.println("VL53L0X iniciado!");
+    Serial.begin(115200);
+
+    /* Giroscopio */
+    MPU6050_Setup();
+
+    /* Laser */
+    VL5_Setup();
     
     // CONFIGURAR QTR
     QTR.setTypeAnalog();
     QTR.setSensorPins((const uint8_t[]){36, 39, 34, 35, 32, 33, 25, 26}, SensorNum);
     QTR.setEmitterPin(27);
     
+    /* LED SETUP */
     pinMode(LED, OUTPUT);
     pinMode(BOTON, INPUT);
     
-    digitalWrite(LED, HIGH);
-    
-    SerialBT.println("Calibrando QTR (mueve el robot sobre la linea)...");
-    for(int i = 0; i < 200; i++) {
-        QTR.calibrate();
-        delay(10);
-    }
-    SerialBT.println("QTR calibrado!");
-    
-    digitalWrite(LED, LOW);
-    
-    SerialBT.println("Presiona el boton para iniciar...");
-    while(digitalRead(BOTON) == 0) {
-        delay(10);
-    }
-    SerialBT.println("INICIANDO!");
-    delay(1000);
+    /* Calibracion QTR inicial */
+    calibrarqtr();
 }
 
 void loop() {
